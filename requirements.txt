@@ -1,0 +1,8 @@
+txt
+CopyEdit
+pandas
+numpy
+yfinance
+matplotlib
+seaborn
+
