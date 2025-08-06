@@ -1,6 +1,7 @@
 import yfinance as yf
+import os
 
-def download_sp500_data(ticker_list, start="2015-01-01", end="2025-08-01"):
+def download_data(ticker_list, start="2015-01-01", end="2025-08-01"):
     data = {}
     for ticker in ticker_list:
         print(f"Downloading data for {ticker}...")
@@ -22,9 +23,19 @@ if __name__ == "__main__":
         "JNJ",  
         "V",     
         "WMT",   
-        "JPM",   
+        "JPM",  
+        "ORCL", 
+        "MARA", 
+        "NVO", 
+        "SOUN", 
+        "LLY",  
     ]
 
-    sp500_data = download_sp500_data(tickers)
+    data = download_data(tickers)
     
-    print(sp500_data["AAPL"].head())
+    print(data["LLY"].head())
+
+# Save the data to CSV files
+os.makedirs("data", exist_ok=True)
+for ticker, df in data.items():
+    df.to_csv(f"data/{ticker}.csv")
