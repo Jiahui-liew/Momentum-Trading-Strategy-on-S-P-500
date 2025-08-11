@@ -2,6 +2,7 @@ from indicators import compute_moving_averages, compute_rsi, compute_adx
 
 def combined_strategy(df):
     df = compute_moving_averages(df)
+
     df = compute_rsi(df)
     
     # Trend filter

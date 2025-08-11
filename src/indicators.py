@@ -6,6 +6,7 @@ def compute_moving_averages(df):
     df['MA200'] = df['Close'].rolling(window=200).mean()
     return df
 
+
 def compute_rsi(df, window=14):
     df['RSI'] = ta.momentum.RSIIndicator(df['Close'], window=window).rsi()
     return df

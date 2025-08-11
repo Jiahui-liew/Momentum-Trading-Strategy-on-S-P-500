@@ -18,9 +18,10 @@ tickers = tickers = [
         "MARA", 
         "NVO", 
         "SOUN", 
-        "LLY",  
+        "LLY",
     ]
 data_dict = download_data(tickers)
+
 
 for ticker, df in data_dict.items():
     print(f"\n==> Backtesting {ticker}")
@@ -29,8 +30,13 @@ for ticker, df in data_dict.items():
 
     sr = sharpe_ratio(df['Strategy_Return'].dropna())
     dd = max_drawdown(df['Portfolio_Value'])
+
+    print(df[['Position', 'Strategy_Return', 'Portfolio_Value']].head(10))
+    print(df[['Position', 'Strategy_Return', 'Portfolio_Value']].tail(10))
+
     total_return = df['Portfolio_Value'].iloc[-1] / df['Portfolio_Value'].iloc[0] - 1
 
     print(f"Total Return: {total_return:.2%}")
     print(f"Sharpe Ratio: {sr:.2f}")
     print(f"Max Drawdown: {dd:.2%}")
+

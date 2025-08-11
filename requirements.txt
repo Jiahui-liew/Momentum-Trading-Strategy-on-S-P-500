@@ -6,3 +6,5 @@ yfinance
 matplotlib
 seaborn
 ta
+xgboost
+scikit-learn
