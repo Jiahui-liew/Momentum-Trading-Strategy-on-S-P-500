@@ -1,9 +1,11 @@
 from fetch_data import download_data
-from strategy import combined_strategy
-from backtest import backtest
-from evaluation import sharpe_ratio, max_drawdown
+from indicators import add_technical_indicators
+from models.train_model import prepare_features, train_xgboost
+from optimiser import optimise_portfolio
+import pandas as pd
 
-tickers = tickers = [
+def main():
+    tickers = [       
         "AAPL", 
         "MSFT",  
         "AMZN",  
@@ -19,24 +21,31 @@ tickers = tickers = [
         "NVO", 
         "SOUN", 
         "LLY",
-    ]
-data_dict = download_data(tickers)
+       ]
 
+    data = download_data(tickers)
 
-for ticker, df in data_dict.items():
-    print(f"\n==> Backtesting {ticker}")
-    df = combined_strategy(df)
-    df = backtest(df)
+    models = {}
+    predicted_returns = {}
 
-    sr = sharpe_ratio(df['Strategy_Return'].dropna())
-    dd = max_drawdown(df['Portfolio_Value'])
+    for ticker, df in data.items():
+        print(f"\nProcessing {ticker}")
+        df = add_technical_indicators(df)
+        X, y = prepare_features(df)
+        model, X_test, y_test, preds = train_xgboost(X, y)
+        models[ticker] = model
 
-    print(df[['Position', 'Strategy_Return', 'Portfolio_Value']].head(10))
-    print(df[['Position', 'Strategy_Return', 'Portfolio_Value']].tail(10))
+        predicted_returns[ticker] = preds.mean()
 
-    total_return = df['Portfolio_Value'].iloc[-1] / df['Portfolio_Value'].iloc[0] - 1
+    predicted_returns_series = pd.Series(predicted_returns)
 
-    print(f"Total Return: {total_return:.2%}")
-    print(f"Sharpe Ratio: {sr:.2f}")
-    print(f"Max Drawdown: {dd:.2%}")
+    print("\nPredicted Returns:")
+    print(predicted_returns_series)
+
+    weights = optimise_portfolio(predicted_returns_series)
+    print("\nOptimized Portfolio Weights:")
+    print(weights)
+
+if __name__ == '__main__':
+    main()
 

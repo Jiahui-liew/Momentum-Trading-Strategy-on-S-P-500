@@ -1,17 +1,16 @@
 import pandas as pd
 import ta
 
-def compute_moving_averages(df):
-    df['MA50'] = df['Close'].rolling(window=50).mean()
-    df['MA200'] = df['Close'].rolling(window=200).mean()
-    return df
+def add_technical_indicators(df, ma_short=50, ma_long=200, rsi_window=14, adx_window=14):
+    # Moving Averages
+    df['MA50'] = df['Close'].rolling(window=ma_short).mean()
+    df['MA200'] = df['Close'].rolling(window=ma_long).mean()
 
+    # RSI
+    df['RSI'] = ta.momentum.RSIIndicator(df['Close'], window=rsi_window).rsi()
 
-def compute_rsi(df, window=14):
-    df['RSI'] = ta.momentum.RSIIndicator(df['Close'], window=window).rsi()
-    return df
-
-def compute_adx(df, window=14):
-    adx = ta.trend.ADXIndicator(high=df['High'], low=df['Low'], close=df['Close'], window=window)
+    # ADX
+    adx = ta.trend.ADXIndicator(df['High'], df['Low'], df['Close'], window=adx_window)
     df['ADX'] = adx.adx()
+
     return df
